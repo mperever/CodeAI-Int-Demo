@@ -1,0 +1,202 @@
+openapi: 3.0.1
+info:
+  title: Charge Session Management API
+  description: This API exposes endpoints to manage charging sessions.
+  termsOfService: https://www.brianeno.com/terms
+  contact:
+    name: BrianEno
+    url: https://www.brianeno.com
+    email: brian.enochson@gmail.com
+  license:
+    name: MIT License
+    url: https://choosealicense.com/licenses/mit/
+  version: "1.0"
+servers:
+- url: http://localhost:8080
+  description: Server URL in Development environment
+- url: https://brianeno.com
+  description: Server URL in Production environment
+tags:
+- name: Charge Session
+  description: Charge Management management APIs
+paths:
+  /api/chargesession/{id}:
+    get:
+      tags:
+      - chargesession
+      - Charge Session
+      - get
+      summary: Retrieve a Charge Session by Id
+      description: "Get a Charge Session object by specifying its id. The response\
+        \ is Charge Session object with id, title, description and published status."
+      operationId: getChargingSessionById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: Not Found
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeSession'
+        "500":
+          description: Internal Server Error
+    put:
+      tags:
+      - chargesession
+      - Charge Session
+      - put
+      summary: Update a Charge Session by Id
+      operationId: updateChargingSession
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChargeSession'
+        required: true
+      responses:
+        "404":
+          description: Not Found
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeSession'
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+      - chargesession
+      - Charge Session
+      - delete
+      summary: Delete a Charge Session by Id
+      operationId: deleteChargingSession
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+  /api/chargesession:
+    get:
+      tags:
+      - chargesession
+      - filter
+      - Charge Session
+      - get
+      summary: Retrieve all Charging Sessions
+      operationId: getAllChargeSession
+      parameters:
+      - name: title
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: There are no Charging Sessions
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeSession'
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+      - chargesession
+      - Charge Session
+      - post
+      summary: Create a new Charge Session
+      operationId: createChargingSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChargeSession'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeSession'
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+      - chargesession
+      - Charge Session
+      - delete
+      summary: Delete all Charge Sessions
+      operationId: deleteAllChargingSessions
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+  /api/chargesession/completed:
+    get:
+      tags:
+      - chargesession
+      - filter
+      - Charge Session
+      - get
+      summary: Retrieve all completed Charge Session
+      operationId: findByPublished
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChargeSession'
+components:
+  schemas:
+    ChargeSession:
+      required:
+      - completed
+      - vin
+      - wattage
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        vin:
+          maxLength: 20
+          minLength: 0
+          type: string
+        wattage:
+          maximum: 8
+          minimum: 0
+          type: integer
+          format: int32
+        completed:
+          type: boolean
